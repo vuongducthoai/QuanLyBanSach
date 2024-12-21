@@ -22,6 +22,7 @@ namespace QuanLyBanSach
         private int maSach;
         private string tenSach;
         private int maPhieuNhap;
+        private int soLuong = 0;
         public FormChiTietPhieuNhap(int maPhieuNhap)
         {
             InitializeComponent();
@@ -97,6 +98,7 @@ namespace QuanLyBanSach
 
                 if (result > 0)
                 {
+                    dataProvider.execNonQuery("UPDATE tbl_sach SET so_luong = so_luong - " + numSachSoLuong.Value + " WHERE ma_sach = " + maSach);
                     MessageBox.Show("Thêm Sách vào phiếu nhập thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     loadDgPhieuNhap();
                     loadTongTien();
@@ -125,11 +127,13 @@ namespace QuanLyBanSach
 
             if (check == DialogResult.Yes)
             {
+                int soLuongTrongPhieuNhap = (int)dataProvider.execScaler("SELECT so_luong FROM tbl_chi_tiet_phieu_nhap WHERE ma_phieu_nhap = " + maPhieuNhap + " AND ma_sach = " + maSach);
                 string query = "DELETE FROM tbl_chi_tiet_phieu_nhap WHERE ma_phieu_nhap = " + maPhieuNhap + "AND ma_sach = " + maSach;
                 int result = dataProvider.execNonQuery(query);
 
                 if (result > 0)
                 {
+                    dataProvider.execQuery("UPDATE tbl_sach SET so_luong = so_luong " + soLuongTrongPhieuNhap + " WHERE ma_sach = " + maSach);
                     MessageBox.Show("Xóa khỏi phiếu nhập thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     loadDgPhieuNhap();
                     loadTongTien();
@@ -154,6 +158,13 @@ namespace QuanLyBanSach
 
             if (result > 0)
             {
+               if(soLuong <= numSachSoLuong.Value)
+               {
+                    dataProvider.execNonQuery("UPDATE tbl_sach SET so_luong = so_luong + " + (numSachSoLuong.Value - soLuong) + " WHERE ma_sach = " + maSach);
+               } else
+               {
+                    dataProvider.execNonQuery("UPDATE tbl_sach SET so_luong = so_luong - " + (soLuong - numSachSoLuong.Value) + " WHERE ma_sach = " + maSach);
+               }
                 MessageBox.Show("Cập nhật so luong trong phiếu nhập thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 loadDgPhieuNhap();
                 loadTongTien();
@@ -181,6 +192,7 @@ namespace QuanLyBanSach
                 tenSach = row.Cells[0].Value.ToString();
                 cbTenSach.Text = tenSach;
                 numSachSoLuong.Value = Convert.ToInt32(row.Cells[1].Value);
+                soLuong = Convert.ToInt32(row.Cells[1].Value);
                 numSachGiaNhap.Value = Convert.ToInt32(row.Cells[2].Value);
 
                 maSach = (int)dataProvider.execScaler("SELECT ma_sach FROM tbl_sach WHERE ten_sach = N'" + tenSach + "'");

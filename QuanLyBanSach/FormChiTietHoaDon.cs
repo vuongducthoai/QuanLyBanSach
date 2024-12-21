@@ -19,6 +19,7 @@ namespace QuanLyBanSach
         private int maSach;
         private string tenSach;
         private int maHoaDon;
+        private int soLuong = 0;
         public FormChiTietHoaDon(int maHoaDon)
         {
             InitializeComponent();
@@ -82,7 +83,18 @@ namespace QuanLyBanSach
     
         private void btnThem_Click(object sender, EventArgs e)
         {
+            int soLuongTon = (int)dataProvider.execScaler("SELECT so_luong FROM tbl_sach WHERE ma_sach = " + maSach);
+
+            // Kiểm tra số lượng tồn kho
+            if (numSachSoLuong.Value > soLuongTon)
+            {
+                MessageBox.Show("Không đủ số lượng sách trong kho!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             int dem = (int)dataProvider.execScaler("SELECT count(*) FROM tbl_chi_tiet_hoa_don WHERE ma_hoa_don = " + maHoaDon + " AND ma_sach  = " + maSach);
+
+
 
             if (dem == 0)
             {
@@ -96,6 +108,8 @@ namespace QuanLyBanSach
 
                 if (result > 0)
                 {
+                    dataProvider.execNonQuery("UPDATE tbl_sach SET so_luong = so_luong - " + numSachSoLuong.Value + " WHERE ma_sach = " + maSach);
+
                     MessageBox.Show("Thêm Sách vào phiếu hóa đơn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     loadDgHoaDon();
                     loadTongTien();
@@ -107,7 +121,7 @@ namespace QuanLyBanSach
             }
             else
             {
-                dem = (int)dataProvider.execScaler("SELECT SUM(so_luong) FROM tbl_chi_tiet_hoa_don WHERE ma_hoa_don = " + maHoaDon+ " AND ma_sach  = " + maSach);
+                dem = (int)dataProvider.execScaler("SELECT SUM(so_luong) FROM tbl_chi_tiet_hoa_don WHERE ma_hoa_don = " + maHoaDon + " AND ma_sach  = " + maSach);
                 update(dem);
             }
         }
@@ -117,27 +131,7 @@ namespace QuanLyBanSach
             update(0);
         }
 
-        private void btnXoa_Click(object sender, EventArgs e)
-        {
-            DialogResult check = MessageBox.Show("Bạn có chắc chắn muốn xóa sách " + tenSach + " ?", "Cảnh báo", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (check == DialogResult.Yes)
-            {
-                string query = "DELETE FROM tbl_chi_tiet_hoa_don WHERE ma_hoa_don= " + maHoaDon + "AND ma_sach = " + maSach;
-                int result = dataProvider.execNonQuery(query);
-
-                if (result > 0)
-                {
-                    MessageBox.Show("Xóa khỏi hóa đơn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    loadDgHoaDon();
-                    loadTongTien();
-                }
-                else
-                {
-                    MessageBox.Show("Xóa khỏi hóa đơn không thành công!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
+    
 
         private void update(int soLuong)
         {
@@ -151,6 +145,13 @@ namespace QuanLyBanSach
 
             if (result > 0)
             {
+                if(soLuong <= numSachSoLuong.Value)
+                {
+                    dataProvider.execNonQuery("UPDATE tbl_sach SET so_luong = so_luong + " + (numSachSoLuong.Value - soLuong) + " WHERE ma_sach = " + maSach);
+                } else
+                {
+                    dataProvider.execNonQuery("UPDATE tbl_sach SET so_luong = so_luong - " + (soLuong - numSachSoLuong.Value) + " WHERE ma_sach = " + maSach);
+                }
                 MessageBox.Show("Cập nhật số lượng trong hóa đơn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 loadDgHoaDon();
                 loadTongTien();
@@ -158,6 +159,32 @@ namespace QuanLyBanSach
             else
             {
                 MessageBox.Show("Cập nhật số lượng trong hóa đơn không thành công!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            DialogResult check = MessageBox.Show("Bạn có chắc chắn muốn xóa sách " + tenSach + " ?", "Cảnh báo", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (check == DialogResult.Yes)
+            {
+                int soLuongTrongHoaDon = (int)dataProvider.execScaler("SELECT so_luong FROM tbl_chi_tiet_hoa_don WHERE ma_hoa_don = " + maHoaDon + " AND ma_sach = " + maSach);
+
+                string query = "DELETE FROM tbl_chi_tiet_hoa_don WHERE ma_hoa_don= " + maHoaDon + "AND ma_sach = " + maSach;
+                int result = dataProvider.execNonQuery(query);
+
+                if (result > 0)
+                {
+                    dataProvider.execNonQuery("UPDATE tbl_sach SET so_luong = so_luong + " + soLuongTrongHoaDon + " WHERE ma_sach = " + maSach);
+
+                    MessageBox.Show("Xóa khỏi hóa đơn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    loadDgHoaDon();
+                    loadTongTien();
+                }
+                else
+                {
+                    MessageBox.Show("Xóa khỏi hóa đơn không thành công!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -178,8 +205,8 @@ namespace QuanLyBanSach
                 tenSach = row.Cells[0].Value.ToString();
                 cbTenSach.Text = tenSach;
                 numSachSoLuong.Value = Convert.ToInt32(row.Cells[1].Value);
+                soLuong = Convert.ToInt32(row.Cells[1].Value);
                 numSachGiaHoaDon.Value = Convert.ToInt32(row.Cells[2].Value);
-
                 maSach = (int)dataProvider.execScaler("SELECT ma_sach FROM tbl_sach WHERE ten_sach = N'" + tenSach + "'");
             }
         }

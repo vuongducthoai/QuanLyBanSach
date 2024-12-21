@@ -37,10 +37,9 @@ namespace QuanLyBanSach
 
                 if (result > 0)
                 {
-                    string selectedPQ = comboBoxPQ.SelectedItem.ToString();
                     MessageBox.Show("Đăng nhập thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                    
-                    Form1 form1 = new Form1(selectedPQ);
+                    Form1 form1 = new Form1();
                     this.Hide(); 
                     form1.ShowDialog();
                     this.Show(); 

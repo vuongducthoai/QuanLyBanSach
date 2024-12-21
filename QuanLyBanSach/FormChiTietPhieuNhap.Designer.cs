@@ -35,13 +35,13 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnXoa = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.txtTongTien = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.numSachGiaNhap = new System.Windows.Forms.NumericUpDown();
             this.numSachSoLuong = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.cbTenSach = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgChiTietPN)).BeginInit();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSachGiaNhap)).BeginInit();
@@ -131,6 +131,18 @@
             this.panel4.Size = new System.Drawing.Size(859, 125);
             this.panel4.TabIndex = 4;
             // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(531, 63);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(163, 45);
+            this.button1.TabIndex = 20;
+            this.button1.Text = "In";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // txtTongTien
             // 
             this.txtTongTien.AutoSize = true;
@@ -140,6 +152,16 @@
             this.txtTongTien.Size = new System.Drawing.Size(114, 20);
             this.txtTongTien.TabIndex = 19;
             this.txtTongTien.Text = "Tổng Tiền: 0";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(589, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(87, 20);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "Gía Nhập";
             // 
             // numSachGiaNhap
             // 
@@ -184,28 +206,6 @@
             this.cbTenSach.Size = new System.Drawing.Size(183, 28);
             this.cbTenSach.TabIndex = 10;
             this.cbTenSach.SelectedIndexChanged += new System.EventHandler(this.cbTenSach_SelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(589, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(87, 20);
-            this.label2.TabIndex = 18;
-            this.label2.Text = "Gía Nhập";
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(531, 63);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(163, 45);
-            this.button1.TabIndex = 20;
-            this.button1.Text = "In";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // FormChiTietPhieuNhap
             // 

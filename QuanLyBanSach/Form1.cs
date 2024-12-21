@@ -21,11 +21,10 @@ namespace QuanLyBanSach
         private int maLoaiSachLoaiSach;
         private int maHoaDonHoaDon;
         private int maPhieuNhapPhieuNhap;
-        public Form1(string selectedQ)
+        public Form1()
         {
             InitializeComponent();
             init();
-            RemoveTabsBasedOnSelection(selectedQ);
         }
 
         private void init()
@@ -36,16 +35,16 @@ namespace QuanLyBanSach
             initPhieuNhap();
         }
 
-        private void RemoveTabsBasedOnSelection(string selectedQ)
-        {
-            foreach (TabPage tabPage in tabControl1.TabPages)
-            {
-                if (tabPage.Name != selectedQ)
-                {
-                    tabControl1.TabPages.Remove(tabPage);
-                }
-            }
-        }
+        //private void RemoveTabsBasedOnSelection(string selectedQ)
+        //{
+        //    foreach (TabPage tabPage in tabControl1.TabPages)
+        //    {
+        //        if (tabPage.Name != selectedQ)
+        //        {
+        //            tabControl1.TabPages.Remove(tabPage);
+        //        }
+        //    }
+        //}
 
 
 
@@ -56,23 +55,23 @@ namespace QuanLyBanSach
             loadcbSachLoaiSach();
         }
 
-        private void loaddgSach()
-        {
-            DataTable dt = new DataTable();
-            StringBuilder query = new StringBuilder("SELECT ma_sach as [Mã Sách]");
-            query.Append(",ten_sach as [Tên Sách]");
-            query = query.Append(", ten_loai_sach as [Loại Sách]");
-            query.Append(",tac_gia as [Tác Gỉa]");
-            query.Append(",so_luong as [Số Lượng]");
-            query.Append(",gia_ban as [Gía Bán]");
-            query.Append(" FROM tbl_sach, tbl_loai_sach");
-            query.Append(" WHERE  tbl_sach.ma_loai_sach = tbl_loai_sach.ma_loai_sach");
+            private void loaddgSach()
+            {
+                DataTable dt = new DataTable();
+                StringBuilder query = new StringBuilder("SELECT ma_sach as [Mã Sách]");
+                query.Append(",ten_sach as [Tên Sách]");
+                query = query.Append(", ten_loai_sach as [Loại Sách]");
+                query.Append(",tac_gia as [Tác Gỉa]");
+                query.Append(",so_luong as [Số Lượng]");
+                query.Append(",gia_ban as [Gía Bán]");
+                query.Append(" FROM tbl_sach, tbl_loai_sach");
+                query.Append(" WHERE  tbl_sach.ma_loai_sach = tbl_loai_sach.ma_loai_sach");
 
-            dt = dataProvider.execQuery(query.ToString());
-            dgSach.DataSource = dt;
+                dt = dataProvider.execQuery(query.ToString());
+                dgSach.DataSource = dt;
 
-            maSachSach = (int)dt.Rows[0][0];
-        }
+                maSachSach = (int)dt.Rows[0][0];
+            }
 
 
         private void loadcbSachLoaiSach()
@@ -110,28 +109,77 @@ namespace QuanLyBanSach
 
         private void btnSachThem_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtSachTenSach.Text))
+            {
+                MessageBox.Show("Tên sách không được để trống!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtSachTacGia.Text))
+            {
+                MessageBox.Show("Tác giả không được để trống!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (numSachSoLuong.Value <= 0)
+            {
+                MessageBox.Show("Số lượng sách phải lớn hơn 0!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (numSachGiaBan.Value <= 0)
+            {
+                MessageBox.Show("Giá bán phải lớn hơn 0!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             StringBuilder query = new StringBuilder("EXEC proc_them_sach");
             query.Append(" @tenSach = N'" + txtSachTenSach.Text + "'");
             query.Append(",@maLoaiSach = " + maSachLoaiSach);
-            query.Append(",@tacGia = N'" + txtSachTacGia.Text + "'");   
+            query.Append(",@tacGia = N'" + txtSachTacGia.Text + "'");
             query.Append(",@soLuong = " + numSachSoLuong.Value);
             query.Append(",@giaBan = " + numSachGiaBan.Value);
 
             int result = dataProvider.execNonQuery(query.ToString());
 
-            if(result > 0)
+            if (result > 0)
             {
                 MessageBox.Show("Thêm Sách thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 loaddgSach();
-            } else
+            }
+            else
             {
                 MessageBox.Show("Thêm sách không thành công!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+
         private void btnSachSua_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtSachTenSach.Text))
+            {
+                MessageBox.Show("Tên sách không được để trống!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtSachTacGia.Text))
+            {
+                MessageBox.Show("Tác giả không được để trống!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (numSachSoLuong.Value <= 0)
+            {
+                MessageBox.Show("Số lượng sách phải lớn hơn 0!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (numSachGiaBan.Value <= 0)
+            {
+                MessageBox.Show("Giá bán phải lớn hơn 0!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             StringBuilder query = new StringBuilder("EXEC proc_cap_nhat_sach");
             query = query.Append(" @maSach = " + maSachSach);
             query.Append(",@tenSach = N'" + txtSachTenSach.Text + "'");
